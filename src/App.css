@@ -11,19 +11,32 @@ body {
     sans-serif;
 }
 
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
 .portal,
 .status-page {
   min-height: 100vh;
   padding: 40px 20px;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   background: #f3f6fb;
   color: #172033;
 }
 
+.status-page {
+  align-items: center;
+  font-size: 18px;
+  font-weight: 600;
+}
+
 .card {
-  width: min(760px, 100%);
+  width: min(1100px, 100%);
   padding: 36px;
   border-radius: 18px;
   background: #ffffff;
@@ -40,16 +53,33 @@ body {
 .label {
   margin: 0 0 6px;
   color: #2563eb;
+  font-size: 14px;
   font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+h1,
+h2,
+h3 {
+  color: #172033;
 }
 
 h1 {
   margin: 0;
-  color: #172033;
+  font-size: 32px;
 }
 
 h2 {
-  color: #172033;
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 22px;
+}
+
+h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 18px;
 }
 
 .account-box,
@@ -65,6 +95,7 @@ h2 {
 .role-panel p {
   margin: 8px 0;
   color: #475569;
+  line-height: 1.6;
 }
 
 .warning {
@@ -79,13 +110,113 @@ h2 {
   background: #2563eb;
   color: #ffffff;
   font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 
 .sign-out-button:hover {
   background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.sign-out-button:active {
+  transform: translateY(0);
 }
 
 .error {
   color: #b91c1c;
+}
+
+.admin-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.admin-card {
+  padding: 20px;
+  border: 1px solid #d8dee8;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(30, 41, 59, 0.06);
+}
+
+.admin-card p {
+  min-height: 52px;
+  margin: 0 0 16px;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.admin-card button {
+  padding: 9px 14px;
+  border: 0;
+  border-radius: 8px;
+  background: #e2e8f0;
+  color: #64748b;
+  font-weight: 600;
+  cursor: not-allowed;
+}
+
+.admin-card:hover {
+  border-color: #bfdbfe;
+  box-shadow: 0 8px 20px rgba(30, 41, 59, 0.09);
+}
+
+@media (max-width: 800px) {
+  .portal,
+  .status-page {
+    padding: 24px 14px;
+  }
+
+  .card {
+    padding: 24px;
+  }
+
+  .header-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .sign-out-button {
+    width: 100%;
+  }
+
+  .admin-grid {
+    grid-template-columns: 1fr;
+  }
+
+  h1 {
+    font-size: 27px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 18px;
+    border-radius: 14px;
+  }
+
+  .account-box,
+  .role-panel {
+    padding: 16px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
 }
