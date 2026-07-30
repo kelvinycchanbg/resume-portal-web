@@ -4,6 +4,7 @@ import { fetchAuthSession } from 'aws-amplify/auth';
 
 import CandidateUpload from './CandidateUpload';
 import HRResumeList from './HRResumeList';
+import AdminDashboard from './AdminDashboard';
 
 import './App.css';
 import '@aws-amplify/ui-react/styles.css';
@@ -54,8 +55,19 @@ function Portal({ signOut, user }) {
     );
   }
 
+  const isAdmin = groups.includes('Admin');
   const isHR = groups.includes('HR');
   const isCandidate = groups.includes('Candidate');
+
+  let dashboardTitle = 'User Dashboard';
+
+  if (isAdmin) {
+    dashboardTitle = 'Admin Dashboard';
+  } else if (isHR) {
+    dashboardTitle = 'HR Dashboard';
+  } else if (isCandidate) {
+    dashboardTitle = 'Candidate Dashboard';
+  }
 
   return (
     <main className="portal">
@@ -63,14 +75,7 @@ function Portal({ signOut, user }) {
         <div className="header-row">
           <div>
             <p className="label">Resume Portal</p>
-
-            <h1>
-              {isHR
-                ? 'HR Dashboard'
-                : isCandidate
-                  ? 'Candidate Dashboard'
-                  : 'User Dashboard'}
-            </h1>
+            <h1>{dashboardTitle}</h1>
           </div>
 
           <button
@@ -93,7 +98,9 @@ function Portal({ signOut, user }) {
           </p>
         </div>
 
-        {isCandidate && (
+        {isAdmin && <AdminDashboard />}
+
+        {!isAdmin && isCandidate && (
           <div className="role-panel">
             <h2>Candidate functions</h2>
 
@@ -106,16 +113,14 @@ function Portal({ signOut, user }) {
           </div>
         )}
 
-        {isHR && (
-          <HRResumeList />
-        )}
+        {!isAdmin && isHR && <HRResumeList />}
 
-        {!isCandidate && !isHR && (
+        {!isAdmin && !isCandidate && !isHR && (
           <div className="role-panel warning">
             <h2>No role assigned</h2>
 
             <p>
-              This user is not in the Candidate or HR group.
+              This user is not assigned to the Candidate, HR or Admin group.
             </p>
           </div>
         )}
