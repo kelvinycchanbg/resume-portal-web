@@ -1,0 +1,113 @@
+.hr-resume-section {
+    margin-top: 32px;
+    padding: 32px;
+    border: 1px solid #d7dfed;
+    border-radius: 16px;
+    background: #f8faff;
+  }
+  
+  .hr-resume-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+  
+  .hr-resume-header h2 {
+    margin: 0 0 8px;
+    font-size: 30px;
+    color: #172033;
+  }
+  
+  .hr-resume-header p {
+    margin: 0;
+    color: #536078;
+    font-size: 17px;
+  }
+  
+  .refresh-button,
+  .download-button {
+    border: none;
+    border-radius: 10px;
+    background: #2864e8;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 12px 20px;
+  }
+  
+  .refresh-button:hover:not(:disabled),
+  .download-button:hover:not(:disabled) {
+    background: #1d4ed8;
+  }
+  
+  .refresh-button:disabled,
+  .download-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+  
+  .resume-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .resume-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 22px;
+    border: 1px solid #d7dfed;
+    border-radius: 14px;
+    background: white;
+  }
+  
+  .resume-information h3 {
+    margin: 0 0 12px;
+    color: #172033;
+    font-size: 22px;
+  }
+  
+  .resume-information p {
+    margin: 6px 0;
+    color: #536078;
+  }
+  
+  .hr-status-message {
+    padding: 22px;
+    border-radius: 12px;
+    background: #edf3ff;
+    color: #34445f;
+    text-align: center;
+    font-weight: 600;
+  }
+  
+  .hr-error-message {
+    margin-bottom: 18px;
+    padding: 15px;
+    border: 1px solid #fca5a5;
+    border-radius: 12px;
+    background: #fee2e2;
+    color: #991b1b;
+    font-weight: 600;
+  }
+  
+  @media (max-width: 700px) {
+    .hr-resume-section {
+      padding: 20px;
+    }
+  
+    .hr-resume-header,
+    .resume-item {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  
+    .refresh-button,
+    .download-button {
+      width: 100%;
+    }
+  }
