@@ -54,23 +54,36 @@ export default function HRResumeList() {
     try {
       const idToken = await getIdToken();
 
-      const response = await fetch(`${API_BASE_URL}/hr/resumes`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${idToken}`,
+      const response = await fetch(
+        `${API_BASE_URL}/hr/resumes`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
         },
-      });
+      );
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Unable to load resumes.');
+        throw new Error(
+          data.message || 'Unable to load resumes.',
+        );
       }
 
-      setResumes(Array.isArray(data.items) ? data.items : []);
+      // Lambda 回傳的是 data.resumes，不是 data.items
+      setResumes(
+        Array.isArray(data.resumes) ? data.resumes : [],
+      );
     } catch (error) {
-      console.error(error);
-      setErrorMessage(error.message || 'Unable to load resumes.');
+      console.error('Load resumes error:', error);
+
+      setErrorMessage(
+        error.message || 'Unable to load resumes.',
+      );
+
+      setResumes([]);
     } finally {
       setIsLoading(false);
     }
@@ -105,26 +118,33 @@ export default function HRResumeList() {
 
       if (!response.ok) {
         throw new Error(
-          data.message || 'Unable to create the download URL.',
+          data.message ||
+            'Unable to create the download URL.',
         );
       }
 
       if (!data.downloadUrl) {
-        throw new Error('The API did not return a download URL.');
+        throw new Error(
+          'The API did not return a download URL.',
+        );
       }
 
       const downloadResponse = await fetch(data.downloadUrl);
 
       if (!downloadResponse.ok) {
-        throw new Error('Unable to download the PDF file.');
+        throw new Error(
+          'Unable to download the PDF file.',
+        );
       }
 
       const fileBlob = await downloadResponse.blob();
       const objectUrl = URL.createObjectURL(fileBlob);
 
       const downloadLink = document.createElement('a');
+
       downloadLink.href = objectUrl;
-      downloadLink.download = resume.fileName || 'resume.pdf';
+      downloadLink.download =
+        resume.fileName || 'resume.pdf';
 
       document.body.appendChild(downloadLink);
       downloadLink.click();
@@ -134,7 +154,8 @@ export default function HRResumeList() {
         URL.revokeObjectURL(objectUrl);
       }, 1000);
     } catch (error) {
-      console.error(error);
+      console.error('Download error:', error);
+
       setErrorMessage(
         error.message || 'Unable to download the resume.',
       );
@@ -150,8 +171,8 @@ export default function HRResumeList() {
           <h2>Candidate resumes</h2>
 
           <p>
-            View and securely download resumes stored in the private S3
-            bucket.
+            View and securely download resumes stored in the
+            private S3 bucket.
           </p>
         </div>
 
@@ -186,13 +207,18 @@ export default function HRResumeList() {
       {!isLoading && resumes.length > 0 && (
         <div className="resume-list">
           {resumes.map((resume) => (
-            <article className="resume-item" key={resume.key}>
+            <article
+              className="resume-item"
+              key={resume.key}
+            >
               <div className="resume-information">
-                <h3>{resume.fileName || 'Unnamed resume'}</h3>
+                <h3>
+                  {resume.fileName || 'Unnamed resume'}
+                </h3>
 
                 <p>
-                  <strong>Candidate:</strong>{' '}
-                  {resume.candidateEmail || 'Unknown'}
+                  <strong>Candidate ID:</strong>{' '}
+                  {resume.candidateId || 'Unknown'}
                 </p>
 
                 <p>
@@ -202,7 +228,7 @@ export default function HRResumeList() {
 
                 <p>
                   <strong>Uploaded:</strong>{' '}
-                  {formatDate(resume.uploadedAt)}
+                  {formatDate(resume.lastModified)}
                 </p>
               </div>
 
