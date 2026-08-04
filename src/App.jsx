@@ -133,7 +133,7 @@ export default function App() {
   return (
     <Authenticator
       loginMechanisms={['email']}
-      hideSignUp
+      signUpAttributes={['email']}
     >
       {({ signOut, user }) => (
         <Portal
