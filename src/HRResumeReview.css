@@ -1,0 +1,137 @@
+.hr-review-section {
+  margin-top: 32px;
+  padding: 32px;
+  border: 1px solid #d7dfed;
+  border-radius: 16px;
+  background: #f8faff;
+}
+
+.hr-review-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.hr-review-eyebrow {
+  margin: 0;
+  color: #2864e8;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.hr-review-header h2 {
+  margin: 0;
+  font-size: 30px;
+  color: #172033;
+}
+
+.hr-review-header p {
+  margin: 0;
+  max-width: 40rem;
+  color: #536078;
+  font-size: 17px;
+}
+
+.hr-review-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.hr-review-meta-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 18px;
+  border: 1px solid #d7dfed;
+  border-radius: 12px;
+  background: white;
+}
+
+.hr-review-meta-card span {
+  color: #6b7a94;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.hr-review-meta-card strong {
+  color: #172033;
+  font-size: 17px;
+  font-weight: 600;
+  word-break: break-word;
+}
+
+.hr-review-panel {
+  margin-top: 16px;
+  padding: 22px;
+  border: 1px solid #d7dfed;
+  border-radius: 14px;
+  background: white;
+}
+
+.hr-review-panel h3 {
+  margin: 0 0 14px;
+  color: #172033;
+  font-size: 20px;
+}
+
+.hr-ai-summary {
+  margin: 0;
+  color: #34445f;
+  font-size: 16px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.hr-ai-summary.empty {
+  color: #7b879c;
+  font-style: italic;
+}
+
+.hr-review-status,
+.hr-review-error {
+  padding: 16px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.hr-review-status {
+  background: #edf3ff;
+  color: #34445f;
+}
+
+.hr-review-error {
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+}
+
+.hr-pdf-preview {
+  width: 100%;
+  min-height: 640px;
+  border: 1px solid #d7dfed;
+  border-radius: 10px;
+  background: #f3f6fb;
+}
+
+@media (max-width: 700px) {
+  .hr-review-section {
+    padding: 20px;
+  }
+
+  .hr-review-meta-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hr-pdf-preview {
+    min-height: 420px;
+  }
+}

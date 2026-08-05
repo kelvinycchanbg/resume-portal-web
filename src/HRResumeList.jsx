@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { fetchAuthSession } from 'aws-amplify/auth';
+import HRResumeReview from './HRResumeReview';
 import './HRResumeList.css';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -35,6 +36,11 @@ export default function HRResumeList() {
   const [isLoading, setIsLoading] = useState(true);
   const [downloadingKey, setDownloadingKey] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [selectedResume, setSelectedResume] = useState(null);
+
+  const handleBackToList = useCallback(() => {
+    setSelectedResume(null);
+  }, []);
 
   const getIdToken = async () => {
     const session = await fetchAuthSession();
@@ -54,35 +60,24 @@ export default function HRResumeList() {
     try {
       const idToken = await getIdToken();
 
-      const response = await fetch(
-        `${API_BASE_URL}/hr/resumes`,
-        {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${idToken}`,
-          },
+      const response = await fetch(`${API_BASE_URL}/hr/resumes`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${idToken}`,
         },
-      );
+      });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          data.message || 'Unable to load resumes.',
-        );
+        throw new Error(data.message || 'Unable to load resumes.');
       }
 
-      // Lambda 回傳的是 data.resumes，不是 data.items
-      setResumes(
-        Array.isArray(data.resumes) ? data.resumes : [],
-      );
+      setResumes(Array.isArray(data.resumes) ? data.resumes : []);
     } catch (error) {
       console.error('Load resumes error:', error);
 
-      setErrorMessage(
-        error.message || 'Unable to load resumes.',
-      );
-
+      setErrorMessage(error.message || 'Unable to load resumes.');
       setResumes([]);
     } finally {
       setIsLoading(false);
@@ -100,41 +95,33 @@ export default function HRResumeList() {
     try {
       const idToken = await getIdToken();
 
-      const response = await fetch(
-        `${API_BASE_URL}/hr/download-url`,
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${idToken}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            key: resume.key,
-          }),
+      const response = await fetch(`${API_BASE_URL}/hr/download-url`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${idToken}`,
+          'Content-Type': 'application/json',
         },
-      );
+        body: JSON.stringify({
+          key: resume.key,
+        }),
+      });
 
       const data = await response.json();
 
       if (!response.ok) {
         throw new Error(
-          data.message ||
-            'Unable to create the download URL.',
+          data.message || 'Unable to create the download URL.',
         );
       }
 
       if (!data.downloadUrl) {
-        throw new Error(
-          'The API did not return a download URL.',
-        );
+        throw new Error('The API did not return a download URL.');
       }
 
       const downloadResponse = await fetch(data.downloadUrl);
 
       if (!downloadResponse.ok) {
-        throw new Error(
-          'Unable to download the PDF file.',
-        );
+        throw new Error('Unable to download the PDF file.');
       }
 
       const fileBlob = await downloadResponse.blob();
@@ -143,8 +130,7 @@ export default function HRResumeList() {
       const downloadLink = document.createElement('a');
 
       downloadLink.href = objectUrl;
-      downloadLink.download =
-        resume.fileName || 'resume.pdf';
+      downloadLink.download = resume.fileName || 'resume.pdf';
 
       document.body.appendChild(downloadLink);
       downloadLink.click();
@@ -156,23 +142,30 @@ export default function HRResumeList() {
     } catch (error) {
       console.error('Download error:', error);
 
-      setErrorMessage(
-        error.message || 'Unable to download the resume.',
-      );
+      setErrorMessage(error.message || 'Unable to download the resume.');
     } finally {
       setDownloadingKey('');
     }
   };
 
+  if (selectedResume) {
+    return (
+      <HRResumeReview
+        resume={selectedResume}
+        onBack={handleBackToList}
+      />
+    );
+  }
+
   return (
     <section className="hr-resume-section">
       <div className="hr-resume-header">
-        <div>
+        <div className="hr-resume-header-copy">
           <h2>Candidate resumes</h2>
 
           <p>
-            View and securely download resumes stored in the
-            private S3 bucket.
+            Review candidate details and AI summaries, or download the
+            original PDF.
           </p>
         </div>
 
@@ -181,15 +174,24 @@ export default function HRResumeList() {
           className="refresh-button"
           onClick={loadResumes}
           disabled={isLoading}
+          aria-label={isLoading ? 'Refreshing resumes' : 'Refresh resumes'}
+          title="Refresh"
         >
-          {isLoading ? 'Loading...' : 'Refresh'}
+          <svg
+            className={`refresh-icon${isLoading ? ' spinning' : ''}`}
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              d="M17.65 6.35A7.95 7.95 0 0 0 12 4a8 8 0 1 0 7.75 10h-2.1A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35Z"
+              fill="currentColor"
+            />
+          </svg>
         </button>
       </div>
 
       {errorMessage && (
-        <div className="hr-error-message">
-          {errorMessage}
-        </div>
+        <div className="hr-error-message">{errorMessage}</div>
       )}
 
       {isLoading && (
@@ -199,31 +201,35 @@ export default function HRResumeList() {
       )}
 
       {!isLoading && resumes.length === 0 && (
-        <div className="hr-status-message">
-          No resumes were found.
-        </div>
+        <div className="hr-status-message">No resumes were found.</div>
       )}
 
       {!isLoading && resumes.length > 0 && (
         <div className="resume-list">
           {resumes.map((resume) => (
-            <article
-              className="resume-item"
-              key={resume.key}
-            >
+            <article className="resume-item" key={resume.key}>
               <div className="resume-information">
                 <h3>
-                  {resume.fileName || 'Unnamed resume'}
+                  {resume.candidateName ||
+                    resume.fileName ||
+                    'Unnamed resume'}
                 </h3>
 
                 <p>
-                  <strong>Candidate ID:</strong>{' '}
-                  {resume.candidateId || 'Unknown'}
+                  <strong>File:</strong> {resume.fileName || 'Unknown'}
                 </p>
 
                 <p>
-                  <strong>Size:</strong>{' '}
-                  {formatFileSize(resume.size)}
+                  <strong>Email:</strong> {resume.email || '—'}
+                </p>
+
+                <p>
+                  <strong>AI summary:</strong>{' '}
+                  {resume.aiSummary ? 'Available' : 'Not available'}
+                </p>
+
+                <p>
+                  <strong>Size:</strong> {formatFileSize(resume.size)}
                 </p>
 
                 <p>
@@ -232,16 +238,26 @@ export default function HRResumeList() {
                 </p>
               </div>
 
-              <button
-                type="button"
-                className="download-button"
-                onClick={() => handleDownload(resume)}
-                disabled={downloadingKey === resume.key}
-              >
-                {downloadingKey === resume.key
-                  ? 'Downloading...'
-                  : 'Download'}
-              </button>
+              <div className="resume-actions">
+                <button
+                  type="button"
+                  className="review-button"
+                  onClick={() => setSelectedResume(resume)}
+                >
+                  Review
+                </button>
+
+                <button
+                  type="button"
+                  className="download-button"
+                  onClick={() => handleDownload(resume)}
+                  disabled={downloadingKey === resume.key}
+                >
+                  {downloadingKey === resume.key
+                    ? 'Downloading...'
+                    : 'Download'}
+                </button>
+              </div>
             </article>
           ))}
         </div>

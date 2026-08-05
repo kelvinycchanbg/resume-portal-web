@@ -5,6 +5,10 @@ import { fetchAuthSession } from 'aws-amplify/auth';
 import CandidateUpload from './CandidateUpload';
 import HRResumeList from './HRResumeList';
 import AdminDashboard from './AdminDashboard';
+import {
+  PortalHeaderProvider,
+  usePortalHeader,
+} from './PortalHeaderContext';
 
 import './App.css';
 import '@aws-amplify/ui-react/styles.css';
@@ -13,6 +17,7 @@ function Portal({ signOut, user }) {
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const { headerAction } = usePortalHeader();
 
   useEffect(() => {
     async function loadUserGroups() {
@@ -78,13 +83,23 @@ function Portal({ signOut, user }) {
             <h1>{dashboardTitle}</h1>
           </div>
 
-          <button
-            type="button"
-            className="sign-out-button"
-            onClick={signOut}
-          >
-            Sign out
-          </button>
+          {headerAction ? (
+            <button
+              type="button"
+              className="sign-out-button"
+              onClick={headerAction.onClick}
+            >
+              {headerAction.label}
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="sign-out-button"
+              onClick={signOut}
+            >
+              Sign out
+            </button>
+          )}
         </div>
 
         <div className="account-box">
@@ -136,10 +151,12 @@ export default function App() {
       signUpAttributes={['email']}
     >
       {({ signOut, user }) => (
-        <Portal
-          signOut={signOut}
-          user={user}
-        />
+        <PortalHeaderProvider>
+          <Portal
+            signOut={signOut}
+            user={user}
+          />
+        </PortalHeaderProvider>
       )}
     </Authenticator>
   );
