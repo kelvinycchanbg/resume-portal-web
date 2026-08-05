@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Local Lambda source (deployed in AWS; not tracked in this repo)
+lambda/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
