@@ -38,6 +38,10 @@ export default function HRResumeList() {
   const [errorMessage, setErrorMessage] = useState('');
   const [selectedResume, setSelectedResume] = useState(null);
 
+  const handleBackToList = useCallback(() => {
+    setSelectedResume(null);
+  }, []);
+
   const getIdToken = async () => {
     const session = await fetchAuthSession();
     const idToken = session.tokens?.idToken?.toString();
@@ -148,7 +152,7 @@ export default function HRResumeList() {
     return (
       <HRResumeReview
         resume={selectedResume}
-        onBack={() => setSelectedResume(null)}
+        onBack={handleBackToList}
       />
     );
   }
@@ -156,7 +160,7 @@ export default function HRResumeList() {
   return (
     <section className="hr-resume-section">
       <div className="hr-resume-header">
-        <div>
+        <div className="hr-resume-header-copy">
           <h2>Candidate resumes</h2>
 
           <p>
@@ -170,8 +174,19 @@ export default function HRResumeList() {
           className="refresh-button"
           onClick={loadResumes}
           disabled={isLoading}
+          aria-label={isLoading ? 'Refreshing resumes' : 'Refresh resumes'}
+          title="Refresh"
         >
-          {isLoading ? 'Loading...' : 'Refresh'}
+          <svg
+            className={`refresh-icon${isLoading ? ' spinning' : ''}`}
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              d="M17.65 6.35A7.95 7.95 0 0 0 12 4a8 8 0 1 0 7.75 10h-2.1A6 6 0 1 1 12 6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35Z"
+              fill="currentColor"
+            />
+          </svg>
         </button>
       </div>
 
@@ -206,10 +221,6 @@ export default function HRResumeList() {
 
                 <p>
                   <strong>Email:</strong> {resume.email || '—'}
-                </p>
-
-                <p>
-                  <strong>Status:</strong> {resume.status || '—'}
                 </p>
 
                 <p>

@@ -8,14 +8,15 @@
 
 .hr-review-header {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 24px;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
   margin-bottom: 24px;
 }
 
 .hr-review-eyebrow {
-  margin: 0 0 6px;
+  margin: 0;
   color: #2864e8;
   font-size: 14px;
   font-weight: 700;
@@ -24,30 +25,16 @@
 }
 
 .hr-review-header h2 {
-  margin: 0 0 8px;
+  margin: 0;
   font-size: 30px;
   color: #172033;
 }
 
 .hr-review-header p {
   margin: 0;
+  max-width: 40rem;
   color: #536078;
   font-size: 17px;
-}
-
-.back-button {
-  border: 1px solid #c5d2ea;
-  border-radius: 10px;
-  background: white;
-  color: #1d4ed8;
-  cursor: pointer;
-  font-size: 16px;
-  padding: 12px 20px;
-  font-weight: 600;
-}
-
-.back-button:hover {
-  background: #edf3ff;
 }
 
 .hr-review-meta-grid {
@@ -135,37 +122,13 @@
   background: #f3f6fb;
 }
 
-.hr-extracted-text {
-  margin: 0;
-  max-height: 280px;
-  overflow: auto;
-  padding: 14px;
-  border-radius: 10px;
-  background: #f3f6fb;
-  color: #34445f;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 13px;
-  line-height: 1.5;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
 @media (max-width: 700px) {
   .hr-review-section {
     padding: 20px;
   }
 
-  .hr-review-header {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
   .hr-review-meta-grid {
     grid-template-columns: 1fr;
-  }
-
-  .back-button {
-    width: 100%;
   }
 
   .hr-pdf-preview {

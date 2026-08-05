@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { fetchAuthSession } from 'aws-amplify/auth';
+import { usePortalHeader } from './PortalHeaderContext';
 import './HRResumeReview.css';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -16,6 +17,18 @@ export default function HRResumeReview({ resume, onBack }) {
   const [previewUrl, setPreviewUrl] = useState('');
   const [isLoadingPreview, setIsLoadingPreview] = useState(true);
   const [previewError, setPreviewError] = useState('');
+  const { setHeaderAction } = usePortalHeader();
+
+  useEffect(() => {
+    setHeaderAction({
+      label: 'Back to list',
+      onClick: onBack,
+    });
+
+    return () => {
+      setHeaderAction(null);
+    };
+  }, [onBack, setHeaderAction]);
 
   useEffect(() => {
     let objectUrl = '';
@@ -95,24 +108,12 @@ export default function HRResumeReview({ resume, onBack }) {
     };
   }, [resume.key]);
 
-  const extractedText = (resume.rawText || '').trim();
-  const truncatedText =
-    extractedText.length > 2500
-      ? `${extractedText.slice(0, 2500)}…`
-      : extractedText;
-
   return (
     <section className="hr-review-section">
       <div className="hr-review-header">
-        <div>
-          <p className="hr-review-eyebrow">Resume review</p>
-          <h2>{resume.fileName || 'Unnamed resume'}</h2>
-          <p>Review candidate details, AI summary, and the uploaded PDF.</p>
-        </div>
-
-        <button type="button" className="back-button" onClick={onBack}>
-          Back to list
-        </button>
+        <p className="hr-review-eyebrow">Resume review</p>
+        <h2>{resume.fileName || 'Unnamed resume'}</h2>
+        <p>Review candidate details, AI summary, and the uploaded PDF.</p>
       </div>
 
       <div className="hr-review-meta-grid">
@@ -129,11 +130,6 @@ export default function HRResumeReview({ resume, onBack }) {
         <div className="hr-review-meta-card">
           <span>Phone</span>
           <strong>{displayValue(resume.phone)}</strong>
-        </div>
-
-        <div className="hr-review-meta-card">
-          <span>Parse status</span>
-          <strong>{displayValue(resume.status)}</strong>
         </div>
       </div>
 
@@ -164,16 +160,6 @@ export default function HRResumeReview({ resume, onBack }) {
             title={`Preview of ${resume.fileName || 'resume'}`}
             src={previewUrl}
           />
-        )}
-      </div>
-
-      <div className="hr-review-panel">
-        <h3>Extracted text</h3>
-
-        {truncatedText ? (
-          <pre className="hr-extracted-text">{truncatedText}</pre>
-        ) : (
-          <p className="hr-ai-summary empty">No extracted text available</p>
         )}
       </div>
     </section>
